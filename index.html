@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Menu Selector</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #131212;
+      --red: #FF000D;
+      --white: #ffffff;
+      --sub: #6B6B6B;
+      --orange: #DA8103;
+      --orange-stroke: #905500;
+      --black: #000000;
+
+      --start-btn-w: 135px;
+      --start-btn-h: 34px;
+
+      --item-btn-w: 240px;
+      --item-btn-h: 42px;
+      --item-gap: 28px;
+
+      --reroll-h: 36px;
+      --radius-pill: 999px;
+      --note-rotate: -5deg;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    html, body {
+      margin: 0;
+      width: 100%;
+      min-height: 100%;
+      background: var(--bg);
+      overflow-x: hidden;
+      font-family: "Inter", sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      color: var(--white);
+    }
+
+    .app {
+      position: relative;
+      width: 100%;
+      min-height: 100vh;
+      overflow: hidden;
+    }
+
+    .screen {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      transition: opacity 0.5s ease, visibility 0.5s ease;
+    }
+
+    .screen.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    button {
+      border: none;
+      cursor: pointer;
+      font-family: "Inter", sans-serif;
+      font-weight: 700;
+      padding: 0;
+      background: none;
+    }
+
+    /* START */
+    .start-wrap {
+      display: grid;
+      place-items: center;
+      width: 100%;
+      min-height: 100vh;
+      padding: 32px;
+    }
+
+    .start-btn {
+      width: var(--start-btn-w);
+      height: var(--start-btn-h);
+      background: var(--red);
+      color: var(--white);
+      border-radius: var(--radius-pill);
+      font-weight: 700;
+      font-size: 16px;
+      line-height: 1;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      transition: transform 0.2s ease, filter 0.2s ease;
+    }
+
+    .start-btn:hover {
+      transform: scale(1.02);
+      filter: brightness(1.05);
+    }
+
+    .start-btn:active {
+      transform: scale(0.98);
+    }
+
+    /* EAT IMAGE */
+    .eat-layer {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      z-index: 5;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      overflow: hidden;
+    }
+
+    .eat-layer.show {
+      opacity: 1;
+    }
+
+    .eat-image {
+      width: min(34vw, 500px);
+      max-width: 500px;
+      max-height: 72vh;
+      object-fit: contain;
+      object-position: center;
+      display: block;
+      opacity: 0;
+      transform: translateY(28px);
+      will-change: transform, opacity;
+    }
+
+    .eat-layer.hold .eat-image {
+      animation: eatHold 2s ease forwards;
+    }
+
+    .eat-layer.exit .eat-image {
+      animation: eatExit 0.9s cubic-bezier(.22, .8, .2, 1) forwards;
+    }
+
+    @keyframes eatHold {
+      0% {
+        opacity: 0;
+        transform: translateY(28px);
+      }
+      18% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes eatExit {
+      0% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(-130vh);
+      }
+    }
+
+    /* MENU SELECTION */
+    .menu-screen {
+      padding: 56px 24px 40px;
+      opacity: 0;
+      visibility: hidden;
+      z-index: 2;
+      overflow-y: auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .menu-screen.ready {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .menu-shell {
+      width: 100%;
+      max-width: 860px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 38px;
+      padding: 40px 0;
+    }
+
+    .items-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      transition: all 0.45s ease;
+    }
+
+    .menu-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      opacity: 0;
+      transform: translateY(20px);
+      margin-bottom: var(--item-gap);
+      transition:
+        transform 0.34s ease,
+        opacity 0.34s ease,
+        max-height 0.34s ease,
+        margin-bottom 0.34s ease,
+        filter 0.28s ease;
+      will-change: transform, opacity;
+      max-height: 90px;
+      overflow: hidden;
+    }
+
+    .menu-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .menu-item.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .menu-item.removing {
+      opacity: 0;
+      transform: translateY(-10px) scale(0.96);
+      filter: blur(1px);
+    }
+
+    .menu-item.removed {
+      opacity: 0 !important;
+      transform: translateY(-14px) scale(0.94) !important;
+      max-height: 0 !important;
+      margin-bottom: 0 !important;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .selector-btn {
+      position: relative;
+      width: var(--item-btn-w);
+      max-width: calc(100vw - 48px);
+      height: var(--item-btn-h);
+      border-radius: var(--radius-pill);
+      background: rgba(255, 255, 255, 0.5);
+      border: 2px solid #000000;
+      color: #000000;
+      font-weight: 700;
+      font-size: 18px;
+      line-height: 1.05;
+      text-align: center;
+      display: grid;
+      place-items: center;
+      padding: 0 20px;
+      transition:
+        opacity 0.25s ease,
+        transform 0.22s ease,
+        background 0.25s ease,
+        box-shadow 0.25s ease;
+      white-space: normal;
+      word-break: break-word;
+      overflow-wrap: anywhere;
+      touch-action: manipulation;
+    }
+
+    .selector-btn .value {
+      display: inline-block;
+      transform-origin: center;
+      transition: transform 0.22s ease, opacity 0.22s ease;
+    }
+
+    .selector-btn.blank {
+      opacity: 0.5;
+    }
+
+    .selector-btn.filled {
+      opacity: 0.78;
+    }
+
+    .selector-btn.locked {
+      opacity: 1;
+      background: rgba(255, 255, 255, 1);
+      box-shadow: 0 0 0 0 rgba(255,255,255,0);
+    }
+
+    .selector-btn.lock-bump {
+      animation: lockBump 0.26s ease;
+    }
+
+    @keyframes lockBump {
+      0%   { transform: scale(1); }
+      50%  { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+
+    .selector-btn.shuffling .value {
+      animation: shuffleText 0.36s ease;
+    }
+
+    @keyframes shuffleText {
+      0%   { opacity: 1; transform: translateY(0); }
+      45%  { opacity: 0; transform: translateY(-10px); }
+      55%  { opacity: 0; transform: translateY(10px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    .selector-btn.unlocking {
+      animation: unlockPulse 0.28s ease;
+    }
+
+    @keyframes unlockPulse {
+      0%   { transform: scale(1); }
+      50%  { transform: scale(0.96); }
+      100% { transform: scale(1); }
+    }
+
+    .subtext {
+      margin-top: 6px;
+      color: var(--sub);
+      font-size: 12px;
+      line-height: 1;
+      text-align: center;
+    }
+
+    .controls {
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity 0.45s ease, transform 0.45s ease;
+    }
+
+    .controls.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .reroll-btn {
+      width: auto;
+      min-width: 100px;
+      height: var(--reroll-h);
+      padding: 0 16px;
+      border-radius: var(--radius-pill);
+      background: var(--orange);
+      border: 2px solid var(--orange-stroke);
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 15px;
+      line-height: 1;
+      text-align: center;
+      display: inline-grid;
+      place-items: center;
+      white-space: nowrap;
+      transition: transform 0.2s ease, opacity 0.25s ease, filter 0.2s ease;
+    }
+
+    .reroll-btn:hover {
+      transform: scale(1.03);
+      filter: brightness(1.03);
+    }
+
+    .reroll-btn:active {
+      transform: scale(0.98);
+    }
+
+    .fade-out-all {
+      opacity: 0 !important;
+      transform: translateY(18px) !important;
+      pointer-events: none !important;
+      transition: opacity 0.45s ease, transform 0.45s ease !important;
+    }
+
+    /* FINAL NOTE */
+    .final-screen {
+      z-index: 10;
+      display: grid;
+      place-items: center;
+      padding: 30px 18px;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .final-screen.show {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
+
+    .menu-note {
+      width: min(82vw, 640px);
+      margin: 0 auto;
+
+      background: #F3F3F3;
+      color: #000000;
+
+      transform: rotate(var(--note-rotate));
+      transform-origin: center;
+
+      padding: 5px 10px 60px;
+
+      box-shadow: 0 10px 40px rgba(0,0,0,0.24);
+    }
+
+    .final-screen.show .menu-note-wrap {
+      animation: noteUp 0.95s cubic-bezier(.18, .84, .2, 1) forwards;
+    }
+
+    @keyframes noteUp {
+      0% {
+        transform: translateY(110vh);
+        opacity: 0;
+      }
+      100% {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .menu-note {
+        width: min(82vw, 364px);
+        margin: 0 auto;
+        padding: 1px 4px 60px 0px;
+        background: #F3F3F3;
+        color: #000000;
+        transform: rotate(var(--note-rotate));
+        transform-origin: center;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.24);
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .note-title {
+        display: block;
+
+        font-family: "Inter", sans-serif;
+        font-weight: 800;
+        font-size: 120px;
+
+        line-height: 0.88;
+        letter-spacing: -0.03em;
+
+        color: #000000;
+
+        margin: 0 auto;
+
+        white-space: nowrap;
+        position: relative
+        left: 2px
+    }
+
+    .note-line {
+      width: 80px;
+      max-width: 70%;
+      height: 1px;
+      background: #000000;
+      margin: 30px auto 0;
+    }
+
+    .note-items {
+      margin-top: 30px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 30px;
+    }
+
+    .note-entry {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      text-align: center;
+    }
+
+    .note-value {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 18px;
+      line-height: 1.1;
+      color: #000000;
+    }
+
+    .note-category {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 14px;
+      line-height: 1.1;
+      color: #6B6B6B;
+    }
+
+    @media (max-width: 640px) {
+      :root {
+        --item-btn-w: 220px;
+        --item-btn-h: 40px;
+        --item-gap: 24px;
+        --reroll-h: 34px;
+      }
+
+      .selector-btn {
+        font-size: 16px;
+        padding: 0 16px;
+      }
+
+      .subtext {
+        font-size: 11px;
+        margin-top: 6px;
+      }
+
+      .menu-shell {
+        gap: 34px;
+      }
+
+      .menu-note {
+        width: min(88vw, 640px);
+        padding: 5px 10px 60px;
+      }
+
+      .note-title {
+        font-size: 84px;
+      }
+
+      .note-line {
+        margin-top: 24px;
+      }
+
+      .note-items {
+        margin-top: 24px;
+        gap: 24px;
+      }
+
+      .note-value {
+        font-size: 16px;
+      }
+
+      .note-category {
+        font-size: 13px;
+      }
+
+      .reroll-btn {
+        font-size: 14px;
+        padding: 0 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <section class="screen start-screen" id="startScreen">
+      <div class="start-wrap">
+        <button class="start-btn" id="startBtn">Let’s Eat</button>
+      </div>
+    </section>
+
+    <div class="eat-layer" id="eatLayer" aria-hidden="true">
+      <img class="eat-image" id="eatImage" src="EAT PNG.png" alt="Eat graphic" />
+    </div>
+
+    <section class="screen menu-screen" id="menuScreen">
+      <div class="menu-shell">
+        <div class="items-group" id="itemsGroup"></div>
+
+        <div class="controls" id="controls">
+          <button class="reroll-btn inactive" id="rerollBtn">Select Items</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen final-screen" id="finalScreen">
+      <div class="menu-note-wrap">
+        <div class="menu-note">
+          <h1 class="note-title">MENU</h1>
+          <div class="note-line"></div>
+          <div class="note-items" id="noteItems"></div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const DATA = {
+      "Meat": [
+        "Beef Brisket","Beef Short Ribs","Beef Slices","Beef Tapa","Chicken Adobo Cuts","Chicken Breast",
+        "Chicken Drumstick","Chicken Gizzard","Chicken Liver","Chicken Sausage","Chicken Skin Strips",
+        "Chicken Strips","Chicken Thigh","Chicken Thigh Fillet","Chicken Wings","Crab Meat","Duck",
+        "Ground Beef","Ground Chicken","Ground Pork","Lamb Slices","Mackerel","Pork Belly",
+        "Pork Belly Strips","Pork Chop","Pork Liempo","Pork Sausage","Pork Shoulder","Salmon",
+        "Shrimp","Squid Rings","Tilapia","Tilapia Fillet","Tofu","Tuna Steak"
+      ],
+      "Cooking Method": [
+        "Afritada","Air Fried","Braised","Breaded & Pan Fry","Bulalo","Bulalo-Style Simmer","Crispy Deep Fry",
+        "Crispy Pan Fried","Curry","Deep Fried","Garlic Sautéed","Ginataan","Ginisa","Grilled",
+        "Inasal Style","Hot Plate Seared","Humba","Inasal","Inihaw","Kaldereta","Kinilaw","Mechado",
+        "Menudo","Nilaga","Paksiw","Pan Seared","Picadillo Simmer","Roasted","Sinigang","Slow Braised",
+        "Slow Cooked","Steamed","Stir-Fried","Tinola"
+      ],
+      "Vegetables": [
+        "Bean Sprouts","Bell Pepper","Bok Choy","Bok Choy","Broccoli","Cabbage","Carrots","Cherry Tomatoes",
+        "Corn","Corn Kernels","Eggplant","Garlic Chives","Green Beans","Green Mango","Green Papaya",
+        "Kalabasa","Kale","Kamote Tops","Kangkong","Mushrooms","Napa Cabbage","Okra","Pechay","Potatoes",
+        "Pumpkin","Radish","Radish","Red Onion","Sayote","Sitaw","Snow Peas","Spinach","String Beans",
+        "Talong","Tomatoes","Young Corn","Zucchini"
+      ],
+      "Soup": [
+        "Batchoy","Bulalo","Chicken Ginger Soup","Chicken Noodle Soup","Corn And Carrots","Corn Chicken Soup",
+        "Mami","Miso Soup","Molo","Nilaga","Pumpkin Soup","Shrimp Miso Soup","Sinigang","Tinola","Vegetable Clear Soup"
+      ],
+      "Side Dish": [
+        "Adobong Kangkong","Asian Slaw","Atchara","Coleslaw","Ensaladang Kamatis","Ensaladang Talong",
+        "Garlic Bok Choy","Garlic Green Beans","Garlic Kangkong","Ginataang Kalabasa","Ginisang Togue",
+        "Ginisang Upo","Gomae Spinach","Kimchi","Kinilaw Style Salad","Laing","Mangga Bagoong",
+        "Pickled Cabbage","Pickled Cucumber","Pickled Papaya","Pickled Radish","Pickled Radish",
+        "Sauteed Mushrooms","Sauteed Pechay","Sesame Broccoli","Stir Fried Sitaw","Stir-Fried Bok Choy",
+        "Stir-Fried Cabbage","Talbos Ng Kamote","Thai Basil Stir Fry","Thai Cucumber Salad",
+        "Thai Papaya Salad","Edamame","Egg Roll","Fish Tofu","Fried Dumplings","Fried Egg","Fried Wontons",
+        "Hash Brown","Lumpiang Shanghai","Salted Egg","Seaweed Salad","Soft Boiled Egg","Spring Rolls",
+        "Steamed Siomai","Tempura Shrimp","Tempura Veg","Tofu Cubes","Tofu Sisig"
+      ],
+      "Carbs": [
+        "Bread","Fried Rice","Noodles","Pasta","Rice","Roti"
+      ],
+      "Sauce": [
+        "Bagoong Dip","Banana Ketchup","Black Bean","Bone Broth Dip","Butter Soy","Calamansi Mayo",
+        "Calamansi Soy","Chili Garlic Oil","Chili Oil","Cumin Chili","Curry Sauce","Fish Sauce Lime",
+        "Garlic Chili Vinegar","Garlic Vinegar","Ginger Soy","Gochujang","Green Curry","Hoisin",
+        "Honey Garlic","Inasal Sauce","Kalbi Marinade","Mang Tomas","Miso Glaze","Ponzu","Soy Garlic",
+        "Soy Ginger Dip","Spiced Vinegar","Sweet Chili Sauce","Sweet Soy","Sweet Vinegar","Teriyaki",
+        "Tomato Garlic","Vinegar Chili","Vinegar Garlic Dip"
+      ]
+    };
+
+    const CATEGORIES = [
+      "Meat",
+      "Cooking Method",
+      "Vegetables",
+      "Soup",
+      "Side Dish",
+      "Carbs",
+      "Sauce"
+    ];
+
+    const state = {
+      started: false,
+      hasSelected: false,
+      finished: false,
+      items: []
+    };
+
+    const startScreen = document.getElementById("startScreen");
+    const startBtn = document.getElementById("startBtn");
+    const eatLayer = document.getElementById("eatLayer");
+    const menuScreen = document.getElementById("menuScreen");
+    const itemsGroup = document.getElementById("itemsGroup");
+    const controls = document.getElementById("controls");
+    const rerollBtn = document.getElementById("rerollBtn");
+    const finalScreen = document.getElementById("finalScreen");
+    const noteItems = document.getElementById("noteItems");
+
+    function sample(list) {
+      return list[Math.floor(Math.random() * list.length)];
+    }
+
+    function getVisibleItems() {
+      return state.items.filter(item => !item.removed);
+    }
+
+    function getLockedVisibleItems() {
+      return state.items.filter(item => !item.removed && item.locked);
+    }
+
+    function animateShuffle(item, newValue) {
+      item.button.classList.add("shuffling");
+
+      setTimeout(() => {
+        item.value = newValue;
+        item.valueEl.textContent = newValue;
+        item.button.classList.remove("blank");
+        item.button.classList.add("filled");
+      }, 140);
+
+      setTimeout(() => {
+        item.button.classList.remove("shuffling");
+      }, 380);
+    }
+
+    function populateAll() {
+      state.items.forEach((item) => {
+        if (item.removed || item.locked) return;
+        const next = sample(DATA[item.category]);
+        animateShuffle(item, next);
+      });
+    }
+
+    function lockItem(item) {
+      if (item.locked || item.removed || !item.value) return;
+      item.locked = true;
+      item.button.classList.add("locked", "lock-bump");
+      setTimeout(() => item.button.classList.remove("lock-bump"), 260);
+    }
+
+    function unlockItem(item) {
+      if (!item.locked || item.removed) return;
+      item.locked = false;
+      item.button.classList.remove("locked");
+      item.button.classList.add("unlocking");
+      setTimeout(() => item.button.classList.remove("unlocking"), 280);
+    }
+
+    function removeItem(item) {
+      if (item.removed || item.locked) return;
+      item.removing = true;
+      item.el.classList.add("removing");
+      clearTimeout(item.clickTimer);
+
+      setTimeout(() => {
+        item.removed = true;
+        item.removing = false;
+        item.el.classList.remove("removing");
+        item.el.classList.add("removed");
+        checkComplete();
+      }, 170);
+    }
+
+    function checkComplete() {
+      if (state.finished) return;
+
+      const visible = getVisibleItems();
+      const lockedVisible = getLockedVisibleItems();
+
+      if (visible.length > 0 && lockedVisible.length === visible.length) {
+        finishToFinal();
+      }
+    }
+
+    function finishToFinal() {
+      if (state.finished) return;
+      state.finished = true;
+
+      itemsGroup.classList.add("fade-out-all");
+      controls.classList.add("fade-out-all");
+
+      setTimeout(() => {
+        renderFinalMenu();
+        finalScreen.classList.add("show");
+      }, 480);
+    }
+
+    function renderFinalMenu() {
+      const lockedItems = getLockedVisibleItems();
+      noteItems.innerHTML = "";
+
+      lockedItems.forEach(item => {
+        const entry = document.createElement("div");
+        entry.className = "note-entry";
+
+        const value = document.createElement("div");
+        value.className = "note-value";
+        value.textContent = item.value;
+
+        const category = document.createElement("div");
+        category.className = "note-category";
+        category.textContent = item.category;
+
+        entry.appendChild(value);
+        entry.appendChild(category);
+        noteItems.appendChild(entry);
+      });
+    }
+
+    function createItem(category, index) {
+      const item = {
+        id: category.toLowerCase().replace(/\s+/g, "-"),
+        category,
+        value: "",
+        locked: false,
+        removed: false,
+        removing: false,
+        lastTap: 0,
+        longPressTimer: null,
+        longPressTriggered: false,
+        clickTimer: null
+      };
+
+      const wrap = document.createElement("div");
+      wrap.className = "menu-item";
+      wrap.dataset.category = category;
+
+      const button = document.createElement("button");
+      button.className = "selector-btn blank";
+      button.type = "button";
+      button.setAttribute("aria-label", category);
+
+      const value = document.createElement("span");
+      value.className = "value";
+      value.textContent = "";
+
+      const subtext = document.createElement("div");
+      subtext.className = "subtext";
+      subtext.textContent = category;
+
+      button.appendChild(value);
+      wrap.appendChild(button);
+      wrap.appendChild(subtext);
+
+      item.el = wrap;
+      item.button = button;
+      item.valueEl = value;
+      item.subtext = subtext;
+
+      button.addEventListener("pointerdown", () => {
+        if (item.removed || item.removing) return;
+
+        item.longPressTriggered = false;
+        clearTimeout(item.longPressTimer);
+
+        item.longPressTimer = setTimeout(() => {
+          if (item.locked) {
+            unlockItem(item);
+            item.longPressTriggered = true;
+          }
+        }, 520);
+      });
+
+      button.addEventListener("pointerup", () => {
+        clearTimeout(item.longPressTimer);
+
+        if (item.longPressTriggered) {
+          item.longPressTriggered = false;
+          return;
+        }
+
+        if (!state.hasSelected) return;
+        if (item.removed || item.removing) return;
+        if (!item.value) return;
+
+        const now = Date.now();
+
+        if (!item.locked && now - item.lastTap < 280) {
+          clearTimeout(item.clickTimer);
+          item.lastTap = 0;
+          removeItem(item);
+          return;
+        }
+
+        item.lastTap = now;
+
+        if (!item.locked) {
+          clearTimeout(item.clickTimer);
+          item.clickTimer = setTimeout(() => {
+            lockItem(item);
+            checkComplete();
+          }, 240);
+        }
+      });
+
+      button.addEventListener("pointerleave", () => clearTimeout(item.longPressTimer));
+      button.addEventListener("pointercancel", () => clearTimeout(item.longPressTimer));
+
+      setTimeout(() => wrap.classList.add("show"), 50 + index * 110);
+
+      return item;
+    }
+
+    function buildMenu() {
+      itemsGroup.innerHTML = "";
+      controls.classList.remove("show");
+      itemsGroup.classList.remove("fade-out-all");
+      controls.classList.remove("fade-out-all");
+
+      state.items = CATEGORIES.map((category, index) => {
+        const item = createItem(category, index);
+        itemsGroup.appendChild(item.el);
+        return item;
+      });
+
+      setTimeout(() => controls.classList.add("show"), 1100);
+    }
+
+    startBtn.addEventListener("click", () => {
+      if (state.started) return;
+      state.started = true;
+
+      startScreen.classList.add("hidden");
+      eatLayer.classList.add("show", "hold");
+
+      setTimeout(() => {
+        eatLayer.classList.remove("hold");
+        eatLayer.classList.add("exit");
+      }, 2000);
+
+      setTimeout(() => {
+        menuScreen.classList.add("ready");
+      }, 2000); /* 2s hold + 0.9s exit + 0.25s delay */
+
+      setTimeout(() => {
+        buildMenu();
+      }, 2100);
+
+      setTimeout(() => {
+        eatLayer.classList.remove("show", "exit");
+      }, 3400);
+    });
+
+    rerollBtn.addEventListener("click", () => {
+      if (state.finished) return;
+
+      if (!state.hasSelected) {
+        state.hasSelected = true;
+        rerollBtn.classList.remove("inactive");
+        rerollBtn.textContent = "Re-Roll";
+        }
+
+      populateAll();
+    });
+  </script>
+</body>
+</html>
