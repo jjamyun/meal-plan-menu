@@ -7,7 +7,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&family=Margarine&family=Schoolbell&display=swap" rel="stylesheet">
 
   <link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
 
@@ -19,7 +19,6 @@
       --sub: #6B6B6B;
       --orange: #DA8103;
       --orange-stroke: #905500;
-      --black: #000000;
 
       --start-btn-w: 135px;
       --start-btn-h: 34px;
@@ -30,7 +29,28 @@
 
       --reroll-h: 36px;
       --radius-pill: 999px;
-      --note-rotate: -5deg;
+
+      --card-width: min(82vw, 364px);
+      --grocery-offset: 20px;
+
+      --note-rotate: -3deg;
+      --menu-top: 20px;
+
+      --grocery-blue: #006fb9;
+      --grocery-paper: #F4EFA8;
+      --grocery-pad: 30px;
+      --grocery-title-size: 28px;
+      --grocery-item-size: 20px;
+
+      --grocery-rule-step: 34px;
+      --rule-gap: 34px;
+      --rule-thickness: 2px;
+      --grocery-rule-offset: 12px;
+
+      --headline-cover-height: 74px;
+      --space-below-last-item: 50px;
+
+      --ingredient-indent: 16px;
     }
 
     * {
@@ -83,7 +103,6 @@
       background: none;
     }
 
-    /* START */
     .start-wrap {
       display: grid;
       place-items: center;
@@ -142,41 +161,41 @@
       object-position: center;
       display: block;
       opacity: 0;
-      transform: translateY(28px);
+      transform: translateY(36px) scale(0.97);
       will-change: transform, opacity;
     }
 
     .eat-layer.hold .eat-image {
-      animation: eatHold 2s ease forwards;
+      animation: eatHold 1s ease forwards;
     }
 
     .eat-layer.exit .eat-image {
-      animation: eatExit 0.9s cubic-bezier(.22, .8, .2, 1) forwards;
+      animation: eatExit 3s cubic-bezier(.22, .8, .2, 1) forwards;
     }
 
     @keyframes eatHold {
       0% {
         opacity: 0;
-        transform: translateY(28px);
+        transform: translateY(36px) scale(0.97);
       }
-      18% {
+      65% {
         opacity: 1;
-        transform: translateY(0);
+        transform: translateY(0) scale(1);
       }
       100% {
         opacity: 1;
-        transform: translateY(0);
+        transform: translateY(0) scale(1);
       }
     }
 
     @keyframes eatExit {
       0% {
         opacity: 1;
-        transform: translateY(0);
+        transform: translateY(0) scale(1);
       }
       100% {
         opacity: 1;
-        transform: translateY(-130vh);
+        transform: translateY(-130vh) scale(1);
       }
     }
 
@@ -312,8 +331,8 @@
     }
 
     @keyframes lockBump {
-      0%   { transform: scale(1); }
-      50%  { transform: scale(1.1); }
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
       100% { transform: scale(1); }
     }
 
@@ -322,9 +341,9 @@
     }
 
     @keyframes shuffleText {
-      0%   { opacity: 1; transform: translateY(0); }
-      45%  { opacity: 0; transform: translateY(-10px); }
-      55%  { opacity: 0; transform: translateY(10px); }
+      0% { opacity: 1; transform: translateY(0); }
+      45% { opacity: 0; transform: translateY(-10px); }
+      55% { opacity: 0; transform: translateY(10px); }
       100% { opacity: 1; transform: translateY(0); }
     }
 
@@ -333,8 +352,8 @@
     }
 
     @keyframes unlockPulse {
-      0%   { transform: scale(1); }
-      50%  { transform: scale(0.96); }
+      0% { transform: scale(1); }
+      50% { transform: scale(0.96); }
       100% { transform: scale(1); }
     }
 
@@ -373,6 +392,7 @@
       display: inline-grid;
       place-items: center;
       white-space: nowrap;
+      opacity: 1;
       transition: transform 0.2s ease, opacity 0.25s ease, filter 0.2s ease;
     }
 
@@ -392,7 +412,7 @@
       transition: opacity 0.45s ease, transform 0.45s ease !important;
     }
 
-    /* FINAL NOTE */
+    /* FINAL STACK */
     .final-screen {
       z-index: 10;
       display: grid;
@@ -409,19 +429,12 @@
       pointer-events: auto;
     }
 
-    .menu-note {
-      width: min(74vw, 640px);
-      margin: 0 auto;
-
-      background: #F3F3F3;
-      color: #000000;
-
-      transform: rotate(var(--note-rotate));
-      transform-origin: center;
-
-      padding: 5px 10px 60px;
-
-      box-shadow: 0 10px 40px rgba(0,0,0,0.24);
+    .menu-note-wrap {
+      position: relative;
+      display: grid;
+      place-items: center;
+      transform: translateY(110vh);
+      opacity: 0;
     }
 
     .final-screen.show .menu-note-wrap {
@@ -439,38 +452,232 @@
       }
     }
 
-    .menu-note {
-        width: min(82vw, 364px);
-        margin: 0 auto;
-        padding: 1px 4px 60px 0px;
-        background: #F3F3F3;
-        color: #000000;
-        transform: rotate(var(--note-rotate));
-        transform-origin: center;
-        box-shadow: 0 10px 40px rgba(0,0,0,0.24);
+    .stack {
+      position: relative;
+      width: calc(var(--card-width) + var(--grocery-offset));
+    }
 
-        display: flex;
-        flex-direction: column;
-        align-items: center;
+    .menu-note,
+    .grocery-note {
+      width: var(--card-width);
+      box-shadow: 0 10px 40px rgba(0,0,0,0.24);
+      border-radius: 0;
+      transition:
+        transform 0.32s cubic-bezier(.22,.8,.2,1),
+        top 0.32s cubic-bezier(.22,.8,.2,1),
+        left 0.32s cubic-bezier(.22,.8,.2,1),
+        z-index 0s linear 0.16s;
+    }
+
+    .grocery-note {
+      position: absolute;
+      top: 0;
+      left: var(--grocery-offset);
+      overflow: hidden;
+      background-color: var(--grocery-paper);
+      z-index: 1;
+      pointer-events: auto;
+    }
+
+    .grocery-note::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background-image:
+        repeating-linear-gradient(
+          to bottom,
+          transparent 0,
+          transparent calc(var(--rule-gap) - var(--rule-thickness)),
+          var(--grocery-blue) calc(var(--rule-gap) - var(--rule-thickness)),
+          var(--grocery-blue) var(--rule-gap)
+        );
+      background-repeat: repeat;
+      background-position: 0 var(--grocery-rule-offset);
+    }
+
+    .headline-cover {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: var(--headline-cover-height);
+      background: var(--grocery-paper);
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .grocery-note.front {
+      z-index: 3;
+      transform: translateX(-10px) translateY(-6px);
+    }
+
+    .grocery-note.behind {
+      z-index: 1;
+      transform: translateX(0) translateY(0);
+    }
+
+    .grocery-note.shuffling-out {
+      transform: translateX(-18px) translateY(-8px);
+    }
+
+    .grocery-inner {
+      position: relative;
+      z-index: 2;
+      padding: var(--grocery-pad);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .grocery-title {
+      margin: 0;
+      padding: 0;
+      font-family: "Margarine", cursive;
+      font-size: var(--grocery-title-size);
+      line-height: 1.1;
+      color: #111;
+      position: relative;
+      z-index: 2;
+      text-align: left;
+    }
+
+    .headline-rule {
+      height: 20px;
+      width: 100%;
+      flex: 0 0 auto;
+    }
+
+    .grocery-list {
+      display: flex;
+      flex-direction: column;
+      margin-top: 0;
+      flex: 1;
+      position: relative;
+      padding-bottom: var(--space-below-last-item);
+    }
+
+    .grocery-row {
+      position: relative;
+      height: var(--grocery-rule-step);
+      min-height: var(--grocery-rule-step);
+      cursor: pointer;
+      touch-action: pan-y;
+      overflow: visible;
+    }
+
+    .grocery-hit {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: calc(-1 * var(--grocery-pad));
+      right: calc(-1 * var(--grocery-pad));
+      z-index: 1;
+    }
+
+    .grocery-text {
+      position: relative;
+      z-index: 3;
+      font-family: "Schoolbell", cursive;
+      font-size: var(--grocery-item-size);
+      line-height: 1.15;
+      color: #111;
+      display: inline-block;
+      transform: translateY(3px);
+      white-space: normal;
+      word-break: break-word;
+      text-align: left;
+    }
+
+    .grocery-row.child .grocery-text {
+      margin-left: var(--ingredient-indent);
+      font-size: var(--grocery-item-size);
+      transform: translateY(3px);
+    }
+
+    .grocery-strike-wrap {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: -6px;
+      bottom: 0;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .grocery-strike {
+      position: absolute;
+      left: -3px;
+      top: 17px;
+      height: 8px;
+      border-radius: 999px;
+      opacity: 0;
+      transform: scaleX(0);
+      transform-origin: left center;
+      transition: transform .2s ease, opacity .2s ease, width .2s ease;
+      pointer-events: none;
+      background-repeat: no-repeat;
+      background-size: 100% 100%;
+      background-position: left center;
+      filter: saturate(1.05);
+    }
+
+    .grocery-row.child .grocery-strike {
+      left: calc(var(--ingredient-indent) - 3px);
+    }
+
+    .grocery-row.crossed .grocery-strike {
+      opacity: .9;
+      transform: scaleX(1);
+    }
+
+    .menu-note {
+      position: absolute;
+      top: var(--menu-top);
+      left: 0;
+      height: auto;
+      margin: 0;
+      padding: 1px 4px 60px 0px;
+      background: #F3F3F3;
+      color: #000000;
+      transform: rotate(var(--note-rotate));
+      transform-origin: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      z-index: 2;
+      touch-action: manipulation;
+    }
+
+    .menu-note.front {
+      z-index: 3;
+      transform: translateX(0) translateY(0) rotate(var(--note-rotate));
+    }
+
+    .menu-note.behind {
+      z-index: 1;
+      transform: translateX(0) translateY(20px) rotate(var(--note-rotate));
+    }
+
+    .menu-note.revealed {
+      transform: translateX(14px) translateY(12px) rotate(var(--note-rotate));
+    }
+
+    .menu-note.shuffling-out {
+      transform: translateX(18px) translateY(-8px) rotate(-5deg);
     }
 
     .note-title {
-        display: block;
-
-        font-family: "Inter", sans-serif;
-        font-weight: 800;
-        font-size: 120px;
-
-        line-height: 0.88;
-        letter-spacing: -0.03em;
-
-        color: #000000;
-
-        margin: 0 auto;
-
-        white-space: nowrap;
-        position: relative
-        
+      display: block;
+      font-family: "Inter", sans-serif;
+      font-weight: 800;
+      font-size: 120px;
+      line-height: 0.88;
+      letter-spacing: -0.03em;
+      color: #000000;
+      margin: 0 auto;
+      white-space: nowrap;
+      position: relative;
     }
 
     .note-line {
@@ -487,6 +694,7 @@
       flex-direction: column;
       align-items: center;
       gap: 30px;
+      width: 100%;
     }
 
     .note-entry {
@@ -517,6 +725,11 @@
         --item-btn-h: 40px;
         --item-gap: 24px;
         --reroll-h: 34px;
+        --card-width: min(64vw, 640px);
+        --grocery-offset: 20px;
+        --grocery-pad: 24px;
+        --grocery-title-size: 28px;
+        --grocery-item-size: 18px;
       }
 
       .selector-btn {
@@ -539,9 +752,7 @@
         max-height: 120vh;
       }
 
-      
       .menu-note {
-        width: min(64vw, 640px);
         padding: 0px 3px 60px 0px;
       }
 
@@ -590,17 +801,29 @@
         <div class="items-group" id="itemsGroup"></div>
 
         <div class="controls" id="controls">
-          <button class="reroll-btn inactive" id="rerollBtn">Select Items</button>
+          <button class="reroll-btn" id="rerollBtn">Select Items</button>
         </div>
       </div>
     </section>
 
     <section class="screen final-screen" id="finalScreen">
       <div class="menu-note-wrap">
-        <div class="menu-note">
-          <h1 class="note-title">MENU</h1>
-          <div class="note-line"></div>
-          <div class="note-items" id="noteItems"></div>
+        <div class="stack" id="stack">
+          <div class="grocery-note behind" id="groceryNote">
+            <div class="headline-cover"></div>
+
+            <div class="grocery-inner" id="groceryInner">
+              <h2 class="grocery-title">GROCERY LlST</h2>
+              <div class="headline-rule"></div>
+              <div class="grocery-list" id="groceryList"></div>
+            </div>
+          </div>
+
+          <div class="menu-note front" id="menuNote">
+            <h1 class="note-title">MENU</h1>
+            <div class="note-line"></div>
+            <div class="note-items" id="noteItems"></div>
+          </div>
         </div>
       </div>
     </section>
@@ -609,52 +832,46 @@
   <script>
     const DATA = {
       "Meat": [
-        "Beef Brisket","Beef Short Ribs","Beef Slices","Beef Tapa","Chicken Adobo Cuts","Chicken Breast",
-        "Chicken Drumstick","Chicken Gizzard","Chicken Liver","Chicken Sausage","Chicken Skin Strips",
-        "Chicken Strips","Chicken Thigh","Chicken Thigh Fillet","Chicken Wings","Crab Meat","Duck",
-        "Ground Beef","Ground Chicken","Ground Pork","Lamb Slices","Mackerel","Pork Belly",
-        "Pork Belly Strips","Pork Chop","Pork Liempo","Pork Sausage","Pork Shoulder","Salmon",
-        "Shrimp","Squid Rings","Tilapia","Tilapia Fillet","Tofu","Tuna Steak"
+        "Beef Brisket","Beef Slices","Beef Tapa","Chicken Breast","Chicken Drumstick","Tender Juicy Hotdog",
+        "Chicken Sausage","Chicken Strips","Chicken Thigh","Chicken Wings","Duck","Ground Beef",
+        "Ground Chicken","Ground Pork","Lamb Slices","Sardines","Pork Belly","Pork Belly Strips",
+        "Pork Chop","Pork Liempo","Pork Sausage","Pork Shoulder","Salmon","Shrimp","Squid Rings",
+        "Tilapia","Tuna Steak","Fish"
       ],
       "Cooking Method": [
-        "Afritada","Air Fried","Braised","Breaded & Pan Fry","Bulalo","Bulalo-Style Simmer","Crispy Deep Fry",
-        "Crispy Pan Fried","Curry","Deep Fried","Garlic Sautéed","Ginataan","Ginisa","Grilled",
-        "Inasal Style","Hot Plate Seared","Humba","Inasal","Inihaw","Kaldereta","Kinilaw","Mechado",
-        "Menudo","Nilaga","Paksiw","Pan Seared","Picadillo Simmer","Roasted","Sinigang","Slow Braised",
-        "Slow Cooked","Steamed","Stir-Fried","Tinola"
+        "Afritada","Air Fried","Braised","Breaded And Pan Fry","Bulalo","Curry","Garlic Sauteed",
+        "Ginataan","Ginisa","Humba","Inasal","Kaldereta","Kinilaw","Mechado","Menudo","Nilaga",
+        "Paksiw","Sinigang","Slow Braised","Steamed","Stir Fried","Tinola","Crispy Pan Fried"
       ],
       "Vegetables": [
-        "Bean Sprouts","Bell Pepper","Bok Choy","Bok Choy","Broccoli","Cabbage","Carrots","Cherry Tomatoes",
-        "Corn","Corn Kernels","Eggplant","Garlic Chives","Green Beans","Green Mango","Green Papaya",
-        "Kalabasa","Kale","Kamote Tops","Kangkong","Mushrooms","Napa Cabbage","Okra","Pechay","Potatoes",
-        "Pumpkin","Radish","Radish","Red Onion","Sayote","Sitaw","Snow Peas","Spinach","String Beans",
-        "Talong","Tomatoes","Young Corn","Zucchini"
+        "Bean Sprouts","Bell Pepper","Bok Choy","Broccoli","Cabbage","Carrots","Cherry Tomatoes","Corn",
+        "Corn Kernels","Eggplant","Garlic Chives","Green Beans","Green Papaya","Kangkong","Mushrooms",
+        "Napa Cabbage","Okra","Pechay","Potatoes","Pumpkin","Radish","White Onion","Red Onion",
+        "Sayote","Sitaw","Snow Peas","Spinach","Talong","Tomatoes","Young Corn","Zucchini"
       ],
       "Soup": [
-        "Batchoy","Bulalo","Chicken Ginger Soup","Chicken Noodle Soup","Corn And Carrots","Corn Chicken Soup",
-        "Mami","Miso Soup","Molo","Nilaga","Pumpkin Soup","Shrimp Miso Soup","Sinigang","Tinola","Vegetable Clear Soup"
+        "Batchoy","Chicken Ginger Soup","Chicken Noodle Soup","Corn And Carrots","Corn Chicken Soup",
+        "Mami","Miso Soup","Molo","Pumpkin Soup","Shrimp Miso Soup","Vegetable Clear Soup"
       ],
       "Side Dish": [
         "Adobong Kangkong","Asian Slaw","Atchara","Coleslaw","Ensaladang Kamatis","Ensaladang Talong",
         "Garlic Bok Choy","Garlic Green Beans","Garlic Kangkong","Ginataang Kalabasa","Ginisang Togue",
-        "Ginisang Upo","Gomae Spinach","Kimchi","Kinilaw Style Salad","Laing","Mangga Bagoong",
-        "Pickled Cabbage","Pickled Cucumber","Pickled Papaya","Pickled Radish","Pickled Radish",
-        "Sauteed Mushrooms","Sauteed Pechay","Sesame Broccoli","Stir Fried Sitaw","Stir-Fried Bok Choy",
-        "Stir-Fried Cabbage","Talbos Ng Kamote","Thai Basil Stir Fry","Thai Cucumber Salad",
-        "Thai Papaya Salad","Edamame","Egg Roll","Fish Tofu","Fried Dumplings","Fried Egg","Fried Wontons",
-        "Hash Brown","Lumpiang Shanghai","Salted Egg","Seaweed Salad","Soft Boiled Egg","Spring Rolls",
+        "Ginisang Upo","Gomae Spinach","Kinilaw Style Salad","Mangga Bagoong","Pickled Cucumber",
+        "Pickled Radish","Sauteed Mushrooms","Sauteed Pechay","Sesame Broccoli","Stir Fried Sitaw",
+        "Stir Fried Bok Choy","Stir Fried Cabbage","Talbos Ng Kamote","Thai Basil Stir Fry",
+        "Thai Cucumber Salad","Thai Papaya Salad","Egg Roll","Fish Tofu","Fried Dumplings","Fried Egg",
+        "Fried Wontons","Lumpiang Shanghai","Salted Egg","Seaweed Salad","Soft Boiled Egg","Spring Rolls",
         "Steamed Siomai","Tempura Shrimp","Tempura Veg","Tofu Cubes","Tofu Sisig"
       ],
       "Carbs": [
-        "Bread","Fried Rice","Noodles","Pasta","Rice","Roti"
+        "Rice","Fried Rice","Noodles","Pasta","Bread","Roti"
       ],
       "Sauce": [
-        "Bagoong Dip","Banana Ketchup","Black Bean","Bone Broth Dip","Butter Soy","Calamansi Mayo",
-        "Calamansi Soy","Chili Garlic Oil","Chili Oil","Cumin Chili","Curry Sauce","Fish Sauce Lime",
-        "Garlic Chili Vinegar","Garlic Vinegar","Ginger Soy","Gochujang","Green Curry","Hoisin",
-        "Honey Garlic","Inasal Sauce","Kalbi Marinade","Mang Tomas","Miso Glaze","Ponzu","Soy Garlic",
-        "Soy Ginger Dip","Spiced Vinegar","Sweet Chili Sauce","Sweet Soy","Sweet Vinegar","Teriyaki",
-        "Tomato Garlic","Vinegar Chili","Vinegar Garlic Dip"
+        "Bagoong","Banana Ketchup","Chili Garlic Oil","Chili Oil","Hoisin","Bulgogi Sauce",
+        "Mang Tomas","Spiced Vinegar","Sweet Chili Sauce","Teriyaki Sauce","Butter Soy",
+        "Calamansi Mayo","Calamansi Soy","Curry Sauce","Fish Sauce Lime","Garlic Chili Vinegar",
+        "Ginger Soy","Green Curry","Honey Garlic","Inasal Sauce","Miso Glaze","Soy Garlic",
+        "Soy Ginger Dip","Sweet Soy","Sweet Vinegar","Tomato Garlic","Vinegar Garlic Dip"
       ]
     };
 
@@ -668,11 +885,126 @@
       "Sauce"
     ];
 
+    const GROCERY_SKIP = new Set([
+      "Air Fried",
+      "Ginisa",
+      "Steamed"
+    ]);
+
+    const GROCERY_DIRECT = new Set([
+      "Beef Brisket","Beef Slices","Beef Tapa","Chicken Breast","Chicken Drumstick","Tender Juicy Hotdog",
+      "Chicken Sausage","Chicken Strips","Chicken Thigh","Chicken Wings","Duck","Ground Beef",
+      "Ground Chicken","Ground Pork","Lamb Slices","Sardines","Pork Belly","Pork Belly Strips",
+      "Pork Chop","Pork Liempo","Pork Sausage","Pork Shoulder","Salmon","Shrimp","Squid Rings",
+      "Tilapia","Tuna Steak","Fish",
+
+      "Bean Sprouts","Bell Pepper","Bok Choy","Broccoli","Cabbage","Carrots","Cherry Tomatoes","Corn",
+      "Corn Kernels","Eggplant","Garlic Chives","Green Beans","Green Papaya","Kangkong","Mushrooms",
+      "Napa Cabbage","Okra","Pechay","Potatoes","Pumpkin","Radish","White Onion","Red Onion",
+      "Sayote","Sitaw","Snow Peas","Spinach","Talong","Tomatoes","Young Corn","Zucchini",
+
+      "Batchoy","Chicken Ginger Soup","Chicken Noodle Soup","Corn And Carrots","Corn Chicken Soup",
+      "Mami","Miso Soup","Molo","Pumpkin Soup","Shrimp Miso Soup","Vegetable Clear Soup",
+
+      "Salted Egg",
+
+      "Bagoong","Banana Ketchup","Chili Garlic Oil","Chili Oil","Hoisin","Bulgogi Sauce",
+      "Mang Tomas","Spiced Vinegar","Sweet Chili Sauce","Teriyaki Sauce",
+
+      "Rice","Fried Rice","Noodles","Pasta","Bread","Roti"
+    ]);
+
+    const INGREDIENT_MAP = {
+      "Afritada": ["Tomato Sauce", "Potatoes", "Bell Peppers", "Garlic"],
+      "Braised": ["Soy Sauce", "Garlic", "Onion", "Broth"],
+      "Breaded And Pan Fry": ["Egg", "Breadcrumbs", "Flour", "Oil"],
+      "Bulalo": ["Cabbage", "Corn", "Onion", "Peppercorn"],
+      "Curry": ["Curry Paste", "Coconut Milk", "Garlic", "Onion"],
+      "Garlic Sauteed": ["Garlic", "Oil", "Soy Sauce", "Pepper"],
+      "Ginataan": ["Coconut Milk", "Garlic", "Onion", "Ginger"],
+      "Humba": ["Soy Sauce", "Brown Sugar", "Garlic", "Bay Leaf"],
+      "Inasal": ["Annatto Oil", "Calamansi", "Garlic", "Vinegar"],
+      "Kaldereta": ["Tomato Sauce", "Liver Spread", "Bell Peppers", "Garlic"],
+      "Kinilaw": ["Vinegar", "Ginger", "Onion", "Chili"],
+      "Mechado": ["Tomato Sauce", "Potatoes", "Soy Sauce", "Garlic"],
+      "Menudo": ["Tomato Sauce", "Potatoes", "Carrots", "Garlic"],
+      "Nilaga": ["Cabbage", "Potatoes", "Corn", "Peppercorn"],
+      "Paksiw": ["Vinegar", "Garlic", "Peppercorn", "Bay Leaf"],
+      "Sinigang": ["Tamarind Broth", "Tomatoes", "Radish", "Kangkong"],
+      "Slow Braised": ["Soy Sauce", "Garlic", "Onion", "Broth"],
+      "Stir Fried": ["Oil", "Garlic", "Vegetables", "Soy Sauce"],
+      "Tinola": ["Ginger", "Sayote", "Chili Leaves", "Broth"],
+      "Crispy Pan Fried": ["Oil"],
+
+      "Adobong Kangkong": ["Kangkong", "Soy Sauce", "Vinegar", "Garlic"],
+      "Asian Slaw": ["Cabbage", "Carrots", "Sesame Dressing", "Scallions"],
+      "Atchara": ["Green Papaya", "Vinegar", "Sugar", "Carrots"],
+      "Coleslaw": ["Cabbage", "Carrots", "Mayonnaise", "Vinegar"],
+      "Ensaladang Kamatis": ["Tomatoes", "Onion", "Fish Sauce", "Calamansi"],
+      "Ensaladang Talong": ["Eggplant", "Tomato", "Onion", "Vinegar"],
+      "Garlic Bok Choy": ["Bok Choy", "Garlic", "Oil", "Soy Sauce"],
+      "Garlic Green Beans": ["Green Beans", "Garlic", "Oil", "Soy Sauce"],
+      "Garlic Kangkong": ["Kangkong", "Garlic", "Oil", "Oyster Sauce"],
+      "Ginataang Kalabasa": ["Squash", "Coconut Milk", "Garlic", "Onion"],
+      "Ginisang Togue": ["Bean Sprouts", "Garlic", "Tofu", "Carrots"],
+      "Ginisang Upo": ["Bottle Gourd", "Garlic", "Onion", "Shrimp"],
+      "Gomae Spinach": ["Spinach", "Sesame Paste", "Soy Sauce", "Sugar"],
+      "Kinilaw Style Salad": ["Cucumber", "Vinegar", "Onion", "Chili"],
+      "Mangga Bagoong": ["Green Mango", "Bagoong", "Sugar", "Chili"],
+      "Pickled Cucumber": ["Cucumber", "Vinegar", "Sugar", "Garlic"],
+      "Pickled Radish": ["Radish", "Vinegar", "Sugar", "Salt"],
+      "Sauteed Mushrooms": ["Mushrooms", "Garlic", "Butter", "Soy Sauce"],
+      "Sauteed Pechay": ["Pechay", "Garlic", "Oil", "Oyster Sauce"],
+      "Sesame Broccoli": ["Broccoli", "Sesame Oil", "Soy Sauce", "Garlic"],
+      "Stir Fried Sitaw": ["Long Beans", "Garlic", "Soy Sauce", "Oil"],
+      "Stir Fried Bok Choy": ["Bok Choy", "Garlic", "Oyster Sauce", "Oil"],
+      "Stir Fried Cabbage": ["Cabbage", "Garlic", "Soy Sauce", "Oil"],
+      "Talbos Ng Kamote": ["Sweet Potato Leaves", "Tomato", "Salted Egg", "Vinegar"],
+      "Thai Basil Stir Fry": ["Thai Basil", "Garlic", "Chili", "Soy Sauce"],
+      "Thai Cucumber Salad": ["Cucumber", "Vinegar", "Sugar", "Chili"],
+      "Thai Papaya Salad": ["Green Papaya", "Fish Sauce", "Lime", "Chili"],
+      "Egg Roll": ["Wrapper", "Cabbage", "Carrot", "Garlic"],
+      "Fish Tofu": ["Fish Tofu", "Soy Sauce", "Garlic", "Oil"],
+      "Fried Dumplings": ["Dumpling Wrapper", "Pork Filling", "Cabbage", "Soy Sauce"],
+      "Fried Egg": ["Egg"],
+      "Fried Wontons": ["Wonton Wrapper", "Pork Filling", "Garlic", "Soy Sauce"],
+      "Lumpiang Shanghai": ["Ground Pork", "Carrots", "Wrapper", "Garlic"],
+      "Seaweed Salad": ["Seaweed", "Sesame Oil", "Soy Sauce", "Vinegar"],
+      "Soft Boiled Egg": ["Egg"],
+      "Spring Rolls": ["Wrapper", "Cabbage", "Carrot", "Garlic"],
+      "Steamed Siomai": ["Ground Pork", "Wonton Wrapper", "Shrimp", "Garlic"],
+      "Tempura Shrimp": ["Shrimp", "Tempura Batter", "Flour", "Oil"],
+      "Tempura Veg": ["Vegetables", "Tempura Batter", "Flour", "Oil"],
+      "Tofu Cubes": ["Tofu", "Soy Sauce", "Garlic", "Oil"],
+      "Tofu Sisig": ["Tofu", "Chili", "Onion", "Calamansi"],
+
+      "Butter Soy": ["Butter", "Soy Sauce", "Garlic", "Sugar"],
+      "Calamansi Mayo": ["Mayonnaise", "Calamansi", "Garlic", "Pepper"],
+      "Calamansi Soy": ["Soy Sauce", "Calamansi", "Garlic", "Chili"],
+      "Curry Sauce": ["Curry Paste", "Coconut Milk", "Garlic", "Onion"],
+      "Fish Sauce Lime": ["Fish Sauce", "Lime", "Sugar", "Chili"],
+      "Garlic Chili Vinegar": ["Vinegar", "Garlic", "Chili", "Sugar"],
+      "Ginger Soy": ["Soy Sauce", "Ginger", "Garlic", "Sugar"],
+      "Green Curry": ["Green Curry Paste", "Coconut Milk", "Fish Sauce", "Basil"],
+      "Honey Garlic": ["Honey", "Garlic", "Soy Sauce", "Vinegar"],
+      "Inasal Sauce": ["Annatto Oil", "Vinegar", "Garlic", "Calamansi"],
+      "Miso Glaze": ["Miso Paste", "Sugar", "Soy Sauce", "Mirin"],
+      "Soy Garlic": ["Soy Sauce", "Garlic", "Sugar", "Sesame Oil"],
+      "Soy Ginger Dip": ["Soy Sauce", "Ginger", "Vinegar", "Chili"],
+      "Sweet Soy": ["Soy Sauce", "Brown Sugar", "Garlic", "Ginger"],
+      "Sweet Vinegar": ["Vinegar", "Sugar", "Garlic", "Chili"],
+      "Tomato Garlic": ["Tomato Sauce", "Garlic", "Onion", "Sugar"],
+      "Vinegar Garlic Dip": ["Vinegar", "Garlic", "Chili", "Pepper"]
+    };
+
     const state = {
       started: false,
       hasSelected: false,
       finished: false,
-      items: []
+      items: [],
+      groceryOpen: false,
+      menuLastTap: 0,
+      groceryLastTap: 0
     };
 
     const startScreen = document.getElementById("startScreen");
@@ -684,6 +1016,11 @@
     const rerollBtn = document.getElementById("rerollBtn");
     const finalScreen = document.getElementById("finalScreen");
     const noteItems = document.getElementById("noteItems");
+    const groceryNote = document.getElementById("groceryNote");
+    const groceryInner = document.getElementById("groceryInner");
+    const groceryList = document.getElementById("groceryList");
+    const menuNote = document.getElementById("menuNote");
+    const stack = document.getElementById("stack");
 
     function sample(list) {
       return list[Math.floor(Math.random() * list.length)];
@@ -696,6 +1033,299 @@
     function getLockedVisibleItems() {
       return state.items.filter(item => !item.removed && item.locked);
     }
+
+    function createCrayonStrokeDataURL(width, height) {
+      const canvas = document.createElement("canvas");
+      canvas.width = Math.max(24, Math.ceil(width));
+      canvas.height = Math.max(12, Math.ceil(height));
+
+      const ctx = canvas.getContext("2d");
+      const startX = 2;
+      const endX = canvas.width - 2;
+      const centerY = canvas.height / 2;
+      const radius = height / 2;
+
+      function rand(min, max) {
+        return Math.random() * (max - min) + min;
+      }
+
+      function drawDot(x, y, w, h, a) {
+        ctx.globalAlpha = a;
+        ctx.beginPath();
+        ctx.ellipse(x, y, w / 2, h / 2, rand(-0.5, 0.5), 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "#d62828";
+
+      for (let i = 0; i < Math.max(700, width * 7); i++) {
+        const x = rand(startX + radius, endX - radius);
+        const y = centerY + rand(-radius * 0.65, radius * 0.65);
+        drawDot(x, y, rand(1.2, 3.8), rand(0.9, 2.6), rand(0.7, 1));
+      }
+
+      for (let i = 0; i < Math.max(450, width * 4); i++) {
+        const x = rand(startX + radius, endX - radius);
+        const y = centerY + rand(-radius, radius);
+        drawDot(x, y, rand(1, 3), rand(0.8, 2), rand(0.35, 0.7));
+      }
+
+      for (let i = 0; i < Math.max(320, width * 3); i++) {
+        const x = rand(startX + radius, endX - radius);
+        const y = centerY + rand(-radius, radius);
+        drawDot(x, y, rand(0.4, 1.2), rand(0.4, 1), rand(0.25, 0.6));
+      }
+
+      for (let i = 0; i < Math.max(220, width * 2); i++) {
+        const x = rand(startX + radius, endX - radius);
+        const top = centerY - radius + rand(-1.4, 1.4);
+        const bottom = centerY + radius + rand(-1.4, 1.4);
+
+        drawDot(x, top, rand(0.7, 2), rand(0.6, 1.3), rand(0.15, 0.35));
+        drawDot(x, bottom, rand(0.7, 2), rand(0.6, 1.3), rand(0.15, 0.35));
+      }
+
+      ctx.globalAlpha = 1;
+      return canvas.toDataURL("image/png");
+    }
+
+    function updateStrikeWidth(row) {
+      const label = row.querySelector(".grocery-text");
+      const strike = row.querySelector(".grocery-strike");
+      if (!label || !strike) return;
+
+      const strikeWidth = Math.ceil(label.getBoundingClientRect().width + 5);
+      const strikeHeight = Math.max(8, Math.ceil(strike.getBoundingClientRect().height || 8));
+
+      strike.style.width = `${strikeWidth}px`;
+      strike.style.backgroundImage = `url(${createCrayonStrokeDataURL(strikeWidth, strikeHeight)})`;
+    }
+
+    function adjustPaperHeight() {
+      const rows = groceryList.querySelectorAll(".grocery-row");
+
+      if (!rows.length) {
+        groceryNote.style.height = "auto";
+        syncStackHeight();
+        return;
+      }
+
+      const lastRow = rows[rows.length - 1];
+      const lastRowBottom = lastRow.offsetTop + lastRow.offsetHeight;
+      const listTop = groceryList.offsetTop;
+      const innerBottomPadding = parseFloat(getComputedStyle(groceryInner).paddingBottom) || 0;
+      const extraSpace =
+        parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--space-below-last-item")) || 50;
+
+      const totalHeight = listTop + lastRowBottom + extraSpace + innerBottomPadding;
+      groceryNote.style.height = `${Math.ceil(totalHeight)}px`;
+
+      syncStackHeight();
+    }
+
+    function syncStackHeight() {
+      requestAnimationFrame(() => {
+        const menuTop = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--menu-top')) || 0;
+        const menuH = menuNote.offsetHeight + menuTop;
+        const groceryH = groceryNote.offsetHeight || 0;
+        stack.style.height = Math.max(menuH, groceryH) + "px";
+      });
+    }
+
+    function buildGroceryEntries(lockedItems) {
+      const entries = [];
+
+      lockedItems.forEach(item => {
+        if (GROCERY_SKIP.has(item.value)) return;
+
+        const mappedIngredients = INGREDIENT_MAP[item.value];
+
+        if (mappedIngredients) {
+          entries.push({ text: item.value, child: false });
+          mappedIngredients.forEach(ingredient => {
+            entries.push({ text: ingredient, child: true });
+          });
+          return;
+        }
+
+        if (GROCERY_DIRECT.has(item.value)) {
+          entries.push({ text: item.value, child: false });
+        }
+      });
+
+      return entries;
+    }
+
+    function finishToFinal() {
+      if (state.finished) return;
+      state.finished = true;
+
+      itemsGroup.classList.add("fade-out-all");
+      controls.classList.add("fade-out-all");
+
+      setTimeout(() => {
+        renderFinalMenu();
+        renderGroceryList();
+        menuNote.classList.add("front");
+        groceryNote.classList.add("behind");
+        finalScreen.classList.add("show");
+        syncStackHeight();
+      }, 480);
+    }
+
+    function renderFinalMenu() {
+      const lockedItems = getLockedVisibleItems();
+      noteItems.innerHTML = "";
+
+      lockedItems.forEach(item => {
+        const entry = document.createElement("div");
+        entry.className = "note-entry";
+
+        const value = document.createElement("div");
+        value.className = "note-value";
+        value.textContent = item.value;
+
+        const category = document.createElement("div");
+        category.className = "note-category";
+        category.textContent = item.category;
+
+        entry.appendChild(value);
+        entry.appendChild(category);
+        noteItems.appendChild(entry);
+      });
+    }
+
+    function createGroceryRow(text, isChild = false) {
+      const row = document.createElement("div");
+      row.className = isChild ? "grocery-row child" : "grocery-row";
+
+      const hit = document.createElement("div");
+      hit.className = "grocery-hit";
+
+      const label = document.createElement("div");
+      label.className = "grocery-text";
+      label.textContent = text;
+
+      const strikeWrap = document.createElement("div");
+      strikeWrap.className = "grocery-strike-wrap";
+
+      const strike = document.createElement("div");
+      strike.className = "grocery-strike";
+
+      strikeWrap.appendChild(strike);
+      row.appendChild(hit);
+      row.appendChild(label);
+      row.appendChild(strikeWrap);
+
+      requestAnimationFrame(() => {
+        updateStrikeWidth(row);
+        adjustPaperHeight();
+      });
+
+      let startX = 0;
+      let tracking = false;
+
+      row.addEventListener("pointerdown", (e) => {
+        startX = e.clientX;
+        tracking = true;
+      });
+
+      row.addEventListener("pointerup", (e) => {
+        if (!tracking) return;
+        tracking = false;
+
+        const dx = e.clientX - startX;
+
+        if (dx > 34) {
+          row.classList.add("crossed");
+        } else if (dx < -34) {
+          row.classList.remove("crossed");
+        }
+      });
+
+      row.addEventListener("pointercancel", () => {
+        tracking = false;
+      });
+
+      return row;
+    }
+
+    function renderGroceryList() {
+      groceryList.innerHTML = "";
+
+      const lockedItems = getLockedVisibleItems();
+      const entries = buildGroceryEntries(lockedItems);
+
+      entries.forEach(entry => {
+        groceryList.appendChild(createGroceryRow(entry.text, entry.child));
+      });
+
+      requestAnimationFrame(() => {
+        groceryList.querySelectorAll(".grocery-row").forEach(updateStrikeWidth);
+        adjustPaperHeight();
+      });
+    }
+
+    function setGroceryOpen(open) {
+      state.groceryOpen = open;
+
+      if (open) {
+        menuNote.classList.add("shuffling-out");
+
+        setTimeout(() => {
+          menuNote.classList.remove("front");
+          menuNote.classList.add("revealed", "behind");
+
+          groceryNote.classList.remove("behind");
+          groceryNote.classList.add("front", "shuffling-out");
+
+          requestAnimationFrame(() => {
+            menuNote.classList.remove("shuffling-out");
+            groceryNote.classList.remove("shuffling-out");
+          });
+        }, 120);
+      } else {
+        groceryNote.classList.add("shuffling-out");
+
+        setTimeout(() => {
+          groceryNote.classList.remove("front");
+          groceryNote.classList.add("behind");
+
+          menuNote.classList.remove("revealed", "behind");
+          menuNote.classList.add("front", "shuffling-out");
+
+          requestAnimationFrame(() => {
+            groceryNote.classList.remove("shuffling-out");
+            menuNote.classList.remove("shuffling-out");
+          });
+        }, 120);
+      }
+
+      syncStackHeight();
+    }
+
+    menuNote.addEventListener("pointerup", () => {
+      if (!state.finished) return;
+      const now = Date.now();
+      if (now - state.menuLastTap < 280) {
+        setGroceryOpen(true);
+        state.menuLastTap = 0;
+      } else {
+        state.menuLastTap = now;
+      }
+    });
+
+    groceryNote.addEventListener("pointerup", () => {
+      if (!state.finished || !state.groceryOpen) return;
+      const now = Date.now();
+      if (now - state.groceryLastTap < 280) {
+        setGroceryOpen(false);
+        state.groceryLastTap = 0;
+      } else {
+        state.groceryLastTap = now;
+      }
+    });
 
     function animateShuffle(item, newValue) {
       item.button.classList.add("shuffling");
@@ -715,8 +1345,7 @@
     function populateAll() {
       state.items.forEach((item) => {
         if (item.removed || item.locked) return;
-        const next = sample(DATA[item.category]);
-        animateShuffle(item, next);
+        animateShuffle(item, sample(DATA[item.category]));
       });
     }
 
@@ -759,41 +1388,6 @@
       if (visible.length > 0 && lockedVisible.length === visible.length) {
         finishToFinal();
       }
-    }
-
-    function finishToFinal() {
-      if (state.finished) return;
-      state.finished = true;
-
-      itemsGroup.classList.add("fade-out-all");
-      controls.classList.add("fade-out-all");
-
-      setTimeout(() => {
-        renderFinalMenu();
-        finalScreen.classList.add("show");
-      }, 480);
-    }
-
-    function renderFinalMenu() {
-      const lockedItems = getLockedVisibleItems();
-      noteItems.innerHTML = "";
-
-      lockedItems.forEach(item => {
-        const entry = document.createElement("div");
-        entry.className = "note-entry";
-
-        const value = document.createElement("div");
-        value.className = "note-value";
-        value.textContent = item.value;
-
-        const category = document.createElement("div");
-        category.className = "note-category";
-        category.textContent = item.category;
-
-        entry.appendChild(value);
-        entry.appendChild(category);
-        noteItems.appendChild(entry);
-      });
     }
 
     function createItem(category, index) {
@@ -885,7 +1479,7 @@
       button.addEventListener("pointerleave", () => clearTimeout(item.longPressTimer));
       button.addEventListener("pointercancel", () => clearTimeout(item.longPressTimer));
 
-      setTimeout(() => wrap.classList.add("show"), 50 + index * 110);
+      setTimeout(() => wrap.classList.add("show"), Math.max(0, -480 + index * 90));
 
       return item;
     }
@@ -902,7 +1496,7 @@
         return item;
       });
 
-      setTimeout(() => controls.classList.add("show"), 1100);
+      setTimeout(() => controls.classList.add("show"), 260);
     }
 
     startBtn.addEventListener("click", () => {
@@ -915,19 +1509,16 @@
       setTimeout(() => {
         eatLayer.classList.remove("hold");
         eatLayer.classList.add("exit");
-      }, 2000);
+      }, 1100);
 
       setTimeout(() => {
         menuScreen.classList.add("ready");
-      }, 2000); /* 2s hold + 0.9s exit + 0.25s delay */
-
-      setTimeout(() => {
         buildMenu();
-      }, 2100);
+      }, 1300);
 
       setTimeout(() => {
         eatLayer.classList.remove("show", "exit");
-      }, 3400);
+      }, 2200);
     });
 
     rerollBtn.addEventListener("click", () => {
@@ -935,11 +1526,17 @@
 
       if (!state.hasSelected) {
         state.hasSelected = true;
-        rerollBtn.classList.remove("inactive");
         rerollBtn.textContent = "Re-Roll";
-        }
+      }
 
       populateAll();
+    });
+
+    window.addEventListener("resize", () => {
+      if (state.finished) {
+        groceryList.querySelectorAll(".grocery-row").forEach(updateStrikeWidth);
+        adjustPaperHeight();
+      }
     });
   </script>
 </body>
