@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport"
+  content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Menu Selector</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -48,7 +49,7 @@
       --grocery-rule-offset: 12px;
 
       --headline-cover-height: 74px;
-      --space-below-last-item: 50px;
+      --space-below-last-item: 48px;
 
       --ingredient-indent: 16px;
     }
@@ -57,6 +58,8 @@
       box-sizing: border-box;
       -webkit-tap-highlight-color: transparent;
       user-select: none;
+      -webkit-user-select: none;
+      -webkit-touch-callout: none;
     }
 
     html, body {
@@ -65,6 +68,7 @@
       min-height: 100%;
       background: var(--bg);
       overflow-x: hidden;
+      overflow-y: auto;
       font-family: "Inter", sans-serif;
     }
 
@@ -415,9 +419,13 @@
     /* FINAL STACK */
     .final-screen {
       z-index: 10;
-      display: grid;
-      place-items: center;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
       padding: 30px 18px;
+      overflow-y: auto;
+      min-height: 100vh;
+
       opacity: 0;
       visibility: hidden;
       pointer-events: none;
@@ -775,6 +783,22 @@
 
       .note-category {
         font-size: 13px;
+      }
+      
+      .grocery-text {
+        transform: translateY(10px);
+      }
+
+      .grocery-row.child .grocery-text {
+        transform: translateY(10px);
+      }
+
+      .grocery-strike {
+        transform: translateY(6px) scaleX(0);
+      }
+
+      .grocery-row.crossed .grocery-strike {
+        transform: translateY(6px) scaleX(1);
       }
 
       .reroll-btn {
