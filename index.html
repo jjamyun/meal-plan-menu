@@ -419,12 +419,11 @@
     /* FINAL STACK */
     .final-screen {
       z-index: 10;
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
+      display: block;
       padding: 30px 18px;
       overflow-y: auto;
       min-height: 100vh;
+      -webkit-overflow-scrolling: touch;
 
       opacity: 0;
       visibility: hidden;
@@ -438,7 +437,7 @@
     }
 
     .menu-note-wrap {
-      position: relative;
+      min-height: calc(100vh - 60px);
       display: grid;
       place-items: center;
       transform: translateY(110vh);
